@@ -23,11 +23,21 @@ document.querySelectorAll(".see-reports").forEach(btn => {
                 const li = document.createElement("li");
                 const when = new Date(r.createdAt).toLocaleString();
                 li.textContent = `${when}: ${r.status}` +
-                    (r.minutesLeft ? ` (${r.minutesLeft} min left)` : "");
+                    (r.minutesLeft != null ? ` (${r.minutesLeft} min left)` : "") +
+                    (r.verified ? " ✓ location verified" : " (location not verified)");
                 list.appendChild(li);
             }
         } catch (e) {
             list.textContent = "Couldn't load reports.";
         }
     });
+});
+
+document.addEventListener("change", (e) => {
+    if (!e.target.matches(".report-status")) return;
+    const field = e.target.closest("form").querySelector(".minutes-field");
+    if (!field) return;
+    const show = e.target.value === "RUNNING";
+    field.hidden = !show;
+    field.querySelector("input").disabled = !show;
 });

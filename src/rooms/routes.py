@@ -6,7 +6,7 @@ import math
 
 bp = Blueprint("rooms", __name__, url_prefix="/rooms")
 VALID_STATUSES = {"IDLE", "RUNNING", "BROKEN"}
-VERIFY_RADIUS_M = 150 # how close counts as "at the room", in meters
+VERIFY_RADIUS_M = 300 # how close counts as "at the room", in meters (adjusted from 150)
 VERIFY_TTL = timedelta(minutes=15)
 
 
@@ -83,6 +83,7 @@ def decorate(room):
             "type": t.get("type"),
             "cycles": t.get("cycles", []),
             "cycleName": m.get("cycleName"),
+            "visibleTimer": t.get("visibleTimer", False),
             "running": left > 0,
             "secondsLeft": left,
             "grid_x": m.get("grid_x"),
@@ -188,10 +189,14 @@ def report(code, machine_id):
         flash("This machine is already idle.")
         return back
 
-    try:
-        minutes = max(0, int(request.form.get("reportedMinutesLeft", 0)))
-    except ValueError:
-        minutes = 0
+    mtype = machine_types.find_one({"_id": machine["referenceId"]}) or {}
+    minutes = None
+    if status == "RUNNING" and mtype.get("visibleTimer"):
+        try:
+            minutes = min(240, max(0, int(request.form.get("reportedMinutesLeft", ""))))
+        except ValueError:
+            flash("Please enter the minutes left.")
+            return back
 
     uid = session.get("user_id")
 

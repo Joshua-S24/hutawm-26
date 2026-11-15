@@ -1,8 +1,11 @@
 {% extends 'base.html' %}
 {% block title %}Dashboard{% endblock %}
 
-{% block body %}
+{% block header %}
 <h1>Rooms</h1>
+{% endblock %}
+
+{% block body %}
 <form method="post">
     <label for="room_id">Room ID</label><br>
     <input type="text" id="room_id" name="room_id" value="{{ room_id or '' }}" autocomplete="off"

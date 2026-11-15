@@ -1,6 +1,9 @@
 body {
     margin: 0;
+    margin-left: 1rem;
     font-family: sans-serif;
+    background-color: #0356fc;
+    color: whitesmoke
 }
 
 /*By id*/
@@ -13,4 +16,52 @@ body {
 .a {
     grid-template-columns: 12px 12px 12px;
     grid-template-rows: 12px 12px 12px;
+}
+
+nav {
+    background-color: #002570;
+    padding: 10px 20px;
+}
+
+nav.a {
+    color: whitesmoke;
+    text-decoration: none;
+}
+
+nav.a {
+    color: whitesmoke;
+    text-decoration: none;
+}
+
+nav.a:visited {
+    color: whitesmoke;
+    text-decoration: none;
+}
+
+nav.a:active {
+    color: whitesmoke;
+    text-decoration: none;
+}
+
+.nav-logo {
+    max-height: 60px;
+    width: auto;
+}
+
+.geolocation {
+    background-color: #002570;
+    margin-block: 10px;
+}
+
+.machine_info {
+    background-color: #002570;
+    border: #071229;
+    border-radius: 4px;
+    padding: 10px;
+    margin-bottom: 10px;
+
+}
+
+.machine_info.h3 {
+    padding-top: 5px;
 }

@@ -1,13 +1,29 @@
 {% extends "base.html" %}
-{% block body %}
+{% block header %}
 <h1>{{ room.name }}</h1>
+{% endblock %}
+{% block body %}
+
 <p>{{ room.description }}</p>
-<p>Admin? {{ is_admin }}</p>
+<div class="view_mode_text">
+    {% if is_admin %}
+    <p>Admin View</p>
+    {% else %}
+    <p>Guest View</p>
+    {% endif %}
+</div>
+<div class="geolocation">
+    <p id="geo_status"></p>
+    <button type="button" onclick="askLocation(this.dataset.url)"
+        data-url="{{ url_for('rooms.verify_location', code=room.roomId) }}">
+        Verify My Location
+    </button>
+</div>
+
 {% for m in machines %}
 <div class="machine_info">
-    <p>Model: {{m.model}}</p>
     <h3>{{ m.name }}</h3>
-
+    <p>Model: {{m.model if m.model else 'Unknown'}}</p>
     {% if m.type == 'DRY' %}
     <h5>Dryer</h5>
 
@@ -32,6 +48,7 @@
     </form>
     {% else %}
     <form method="post" action="{{ url_for('rooms.start', code=room.roomId, machine_id=m.machineId) }}">
+        <p>Currently idle. Select a cycle.</p>
         <select name="cycle">
             {% for c in m.cycles %}<option>{{ c.name }}</option>{% endfor %}
         </select>
@@ -41,11 +58,19 @@
     <details>
         <summary>Report a problem</summary>
         <form method="post" action="{{ url_for('rooms.report', code=room.roomId, machine_id=m.machineId) }}">
-            <select name="reportedStatus">
+            <select name="reportedStatus" class="report-status">
                 <option value="IDLE">It's idle</option>
                 <option value="RUNNING">It's running</option>
                 <option value="BROKEN">It's broken/out of order</option>
             </select>
+
+            {% if m.visibleTimer %}
+            <label class="minutes-field" hidden>
+                Minutes left
+                <input type="number" name="reportedMinutesLeft" min="0" max="240" required disabled>
+            </label>
+            {% endif %}
+
             <button type="submit">Submit</button>
         </form>
     </details>
@@ -56,11 +81,7 @@
 
 </div>
 {% endfor %}
-<p id="geo_status"></p>
-<button type="button" onclick="askLocation(this.dataset.url)"
-    data-url="{{ url_for('rooms.verify_location', code=room.roomId) }}">
-    Verify My Location
-</button>
+
 <section id="reports-panel" hidden>
     <h2 id="reports-title"></h2>
     <ul id="reports-list"></ul>

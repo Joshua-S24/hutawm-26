@@ -10,7 +10,9 @@
 
 <body>
     <nav>
-        <a href="{{ url_for('rooms.dashboard') }}">Dashboard</a>
+        <a href="{{ url_for('rooms.dashboard') }}">
+            <img src="{{ url_for('static', filename='images/wg_logo.svg') }}" alt="Dashboard" class="nav-logo">
+        </a>
         {% if session.user_id %}
         <a href="{{ url_for('auth.logout') }}">Log out</a>
 
@@ -20,6 +22,8 @@
         <a href="{{ url_for('auth.login') }}">Login</a>
         {% endif %}
     </nav>
+
+    {% block header %}{% endblock %}
 
     {% for message in get_flashed_messages() %}
     <p class="flash">{{ message }}</p>
