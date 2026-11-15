@@ -29,4 +29,4 @@ def home():
     return redirect(url_for("rooms.dashboard"))
 
 if __name__ == "__main__":
-    app.run()
+    app.run(debug=False, port=5001) # TODO: Should be false when shipping

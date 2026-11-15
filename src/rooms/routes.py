@@ -1,6 +1,7 @@
 from datetime import datetime, timedelta, timezone
 from flask import Blueprint, render_template, request, redirect, url_for, flash, jsonify, abort
-from db import rooms, machine_types
+from bson import ObjectId
+from db import rooms, machine_types, users
 
 bp = Blueprint("rooms", __name__, url_prefix="/rooms")
 
@@ -19,6 +20,13 @@ def get_room(code):
         abort(404)
     return room
 
+def is_room_admin(room):
+    uid = session.get("user_id")
+    if not uid:
+        return False
+    return users.count_documents(
+        {"_id": ObjectId(uid), "adminRoomIds": room["_id"]}, limit=1
+    ) > 0
 
 def decorate(room):
     """Add computed status and cycle options to each machine."""
@@ -34,6 +42,7 @@ def decorate(room):
         out.append({
             "machineId": m["machineId"],
             "name": m.get("machineName"),
+            "model": t.get("model"),
             "type": t.get("type"),
             "cycles": t.get("cycles", []),
             "cycleName": m.get("cycleName"),
@@ -59,7 +68,7 @@ def dashboard():
 @bp.route("/<code>")
 def room_view(code):
     room = get_room(code)
-    return render_template("rooms/view.html", room=room, machines=decorate(room))
+    return render_template("rooms/view.html", room=room, machines=decorate(room), is_admin=is_room_admin(room))
 
 
 @bp.route("/<code>/api/status")
@@ -105,6 +114,7 @@ def start(code, machine_id):
 @bp.route("/<code>/machines/<int:machine_id>/stop", methods=["POST"])
 def stop(code, machine_id):
     room = get_room(code)
+    if not is_room_admin(room): abort(403)
     rooms.update_one(
         {"roomId": room["roomId"], "machines.machineId": machine_id},
         {"$set": {

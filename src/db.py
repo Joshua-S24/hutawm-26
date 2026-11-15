@@ -9,12 +9,12 @@ USER = quote_plus(os.environ["DB_USERNAME"])
 PASSWORD = quote_plus(os.environ["DB_PASSWORD"])
 
 mongo_uri = f"mongodb+srv://{USER}:{PASSWORD}@cluster0.tk16v6r.mongodb.net/"
-client = MongoClient(mongo_uri, tz_aware=True)
+client = MongoClient(mongo_uri, tz_aware=True, serverSelectionTimeoutMS=5000) #temporary shortening
 db = client["WasheteriaTracking"]
 
 
 rooms = db["rooms"]
-machine_types = db["machine_types"]
+machine_types = db["machines"]
 reports = db["reports"]
 users = db["users"]
 users.create_index("username", unique=True)
