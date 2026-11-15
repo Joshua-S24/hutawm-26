@@ -1,3 +1,4 @@
+// reports.js
 const panel = document.getElementById("reports-panel");
 const title = document.getElementById("reports-title");
 const list = document.getElementById("reports-list");

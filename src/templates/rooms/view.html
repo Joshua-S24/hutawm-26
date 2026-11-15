@@ -56,12 +56,18 @@
 
 </div>
 {% endfor %}
+<p id="geo_status"></p>
+<button type="button" onclick="askLocation(this.dataset.url)"
+    data-url="{{ url_for('rooms.verify_location', code=room.roomId) }}">
+    Verify My Location
+</button>
 <section id="reports-panel" hidden>
     <h2 id="reports-title"></h2>
     <ul id="reports-list"></ul>
 </section>
 {% block scripts %}
 <script src="{{ url_for('static', filename='javascript/reports.js') }}" defer></script>
+<script src="{{ url_for('static', filename='javascript/geolocation.js') }}" defer></script>
 {% endblock %}
 
 {% endblock %}
