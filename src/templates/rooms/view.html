@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block body %}
+<p><a href="{{ url_for('rooms.dashboard') }}">&larr; Back</a></p>
+<h1>{{ room.name }}</h1>
+<p>{{ room.description }}</p>
+
+{% for m in machines %}
+<div>
+    <h3>{{ m.name }} ({{ m.type|title }})</h3>
+    {% if m.running %}
+    <p>{{ m.cycleName }}: {{ m.secondsLeft // 60 }} min left</p>
+    <form method="post" action="{{ url_for('rooms.stop', code=room.roomId, machine_id=m.machineId) }}">
+        <button>Mark as done</button>
+    </form>
+    {% else %}
+    <form method="post" action="{{ url_for('rooms.start', code=room.roomId, machine_id=m.machineId) }}">
+        <select name="cycle">
+            {% for c in m.cycles %}<option>{{ c.name }}</option>{% endfor %}
+        </select>
+        <button>Start</button>
+    </form>
+    {% endif %}
+</div>
+{% endfor %}
+{% endblock %}

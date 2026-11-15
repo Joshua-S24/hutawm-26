@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block head %}
+{% endblock %}
+
+{% block title %}Register{% endblock %}
+
+{% block body %}
+<h1>Register</h1>
+
+<form method="post">
+    <label for="username">Username</label><br>
+    <input type="text" id="username" name="username" value="{{ username or '' }}" required><br>
+
+    <label for="email">Email</label><br>
+    <input type="email" id="email" name="email" size="20" autocomplete="email" required><br>
+
+    <label for="password">Password</label><br>
+    <input type="password" id="password" name="password" size="20" autocomplete="new-password" required><br>
+
+    <label for="confirm_password">Confirm Password</label><br>
+    <input type="password" id="confirm_password" name="confirm_password" size="20" autocomplete="new-password"
+        required><br>
+
+    <button type="submit">Register</button>
+    <h3>Have an account?</h3>
+    <a href="{{ url_for('auth.login') }}">Login here</a>
+</form>
+{% endblock %}

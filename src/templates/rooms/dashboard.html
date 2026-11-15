@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% block title %}Dashboard{% endblock %}
+
+{% block body %}
+<h1>Rooms</h1>
+<form method="post">
+    <label for="room_id">Room ID</label><br>
+    <input type="text" id="room_id" name="room_id" value="{{ room_id or '' }}" autocomplete="off"
+        autocapitalize="characters" required><br>
+    <button type="submit">View</button>
+</form>
+<!--In the future add rows for publicly accessible rooms and admin rooms-->
+{% endblock %}

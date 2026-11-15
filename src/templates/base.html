@@ -5,11 +5,26 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
-    {% block head %}{% endblock %}
+    {% block head %}<title>Washeteria</title>{% endblock %}
 </head>
 
 <body>
-    <!-- blocks can be overriden while keeping the same theme-->
+    <nav>
+        <a href="{{ url_for('rooms.dashboard') }}">Dashboard</a>
+        {% if session.user_id %}
+        <a href="{{ url_for('auth.logout') }}">Log out</a>
+
+        <body>UsernameHere</body>
+        {% else %}
+        <a href="{{ url_for('auth.register') }}">Register</a>
+        <a href="{{ url_for('auth.login') }}">Login</a>
+        {% endif %}
+    </nav>
+
+    {% for message in get_flashed_messages() %}
+    <p class="flash">{{ message }}</p>
+    {% endfor %}
+
     {% block body %}{% endblock %}
 </body>
 
