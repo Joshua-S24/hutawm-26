@@ -18,33 +18,35 @@ body {
     grid-template-rows: 12px 12px 12px;
 }
 
-nav {
+.navbar {
     background-color: #002570;
     padding: 10px 20px;
 }
 
-nav.a {
+.navbar ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    gap: 1rem;
+}
+
+.navbar a {
     color: whitesmoke;
     text-decoration: none;
 }
 
-nav.a {
+.navbar a:hover,
+.navbar a:focus,
+.navbar a:visited,
+.navbar a:active {
     color: whitesmoke;
     text-decoration: none;
 }
 
-nav.a:visited {
-    color: whitesmoke;
-    text-decoration: none;
-}
-
-nav.a:active {
-    color: whitesmoke;
-    text-decoration: none;
-}
 
 .nav-logo {
-    max-height: 60px;
+    height: 60px;
     width: auto;
 }
 

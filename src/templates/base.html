@@ -9,18 +9,21 @@
 </head>
 
 <body>
-    <nav>
-        <a href="{{ url_for('rooms.dashboard') }}">
-            <img src="{{ url_for('static', filename='images/wg_logo.svg') }}" alt="Dashboard" class="nav-logo">
-        </a>
-        {% if session.user_id %}
-        <a href="{{ url_for('auth.logout') }}">Log out</a>
-
-        <body>UsernameHere</body>
-        {% else %}
-        <a href="{{ url_for('auth.register') }}">Register</a>
-        <a href="{{ url_for('auth.login') }}">Login</a>
-        {% endif %}
+    <nav class="navbar">
+        <ul>
+            <li><a href="{{ url_for('rooms.dashboard') }}">
+                    <img src="{{ url_for('static', filename='images/wg_logo.svg') }}" alt="Dashboard" class="nav-logo">
+                </a></li>
+            {% if session.user_id %}
+            <li><a href="{{ url_for('auth.logout') }}">Log out</a></li>
+            <li>
+                <p>{{ current_username }}</p>
+            </li>
+            {% else %}
+            <li><a href="{{ url_for('auth.register') }}">Register</a></li>
+            <li><a href="{{ url_for('auth.login') }}">Login</a></li>
+            {% endif %}
+        </ul>
     </nav>
 
     {% block header %}{% endblock %}
