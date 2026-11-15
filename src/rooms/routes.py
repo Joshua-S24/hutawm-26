@@ -1,10 +1,10 @@
 from datetime import datetime, timedelta, timezone
-from flask import Blueprint, render_template, request, redirect, url_for, flash, jsonify, abort
+from flask import Blueprint, render_template, request, redirect, session, url_for, flash, jsonify, abort
 from bson import ObjectId
-from db import rooms, machine_types, users
+from db import rooms, machine_types, users, reports
 
 bp = Blueprint("rooms", __name__, url_prefix="/rooms")
-
+VALID_STATUSES = {"IDLE", "RUNNING", "BROKEN"}
 
 def utcnow():
     return datetime.now(timezone.utc)
@@ -124,3 +124,52 @@ def stop(code, machine_id):
         }},
     )
     return redirect(url_for("rooms.room_view", code=room["roomId"]))
+
+@bp.route("/<code>/machines/<int:machine_id>/report", methods=["POST"])
+def report(code, machine_id):
+    room = get_room(code)
+    back = redirect(url_for("rooms.room_view", code=room["roomId"]))
+
+    if not any(m["machineId"] == machine_id for m in room["machines"]):
+        abort(404)
+
+    status = request.form.get("reportedStatus", "")
+    if status not in VALID_STATUSES:
+        flash("Invalid report status.")
+        return back
+
+    try:
+        minutes = max(0, int(request.form.get("reportedMinutesLeft", 0)))
+    except ValueError:
+        minutes = 0
+
+    uid = session.get("user_id")
+
+    reports.insert_one({
+        "roomId": room["roomId"],
+        "machineId": machine_id,
+        "userSource": ObjectId(uid) if uid else None,
+        "locationVerified": False,
+        "reportedStatus": status,
+        "reportedMinutesLeft": minutes,
+        "createdAt": utcnow(),
+    })
+
+    flash("Thanks, your report was submitted.")
+    return back
+
+@bp.route("/<code>/machines/<int:machine_id>/reports")
+def machine_reports(code, machine_id):
+    room = get_room(code)
+    docs = (reports.find({"roomId": room["roomId"], "machineId": machine_id})
+                .sort("createdAt", -1)
+                .limit(10))
+    return jsonify([
+        {
+            "status": d.get("reportedStatus"),
+            "minutesLeft": d.get("reportedMinutesLeft"),
+            "createdAt": d["createdAt"].isoformat(),
+            "verified": d.get("locationVerified", False),
+        }
+        for d in docs
+    ])

@@ -2,7 +2,7 @@
 {% block body %}
 <h1>{{ room.name }}</h1>
 <p>{{ room.description }}</p>
-
+<p>Admin? {{ is_admin }}</p>
 {% for m in machines %}
 <div class="machine_info">
     <p>Model: {{m.model}}</p>
@@ -26,7 +26,7 @@
 
     {% endif %}
 
-    {% if m.running %}
+    {% if m.running and is_admin %}
     <form method="post" action="{{ url_for('rooms.stop', code=room.roomId, machine_id=m.machineId) }}">
         <button>Mark as done</button>
     </form>
@@ -38,9 +38,30 @@
         <button>Start</button>
     </form>
     {% endif %}
-    <p>Report different status</p>
-
+    <details>
+        <summary>Report a problem</summary>
+        <form method="post" action="{{ url_for('rooms.report', code=room.roomId, machine_id=m.machineId) }}">
+            <select name="reportedStatus">
+                <option value="IDLE">It's idle</option>
+                <option value="RUNNING">It's running</option>
+                <option value="BROKEN">It's broken/out of order</option>
+            </select>
+            <button type="submit">Submit</button>
+        </form>
+    </details>
+    <button type="button" class="see-reports" data-name="{{ m.name }}"
+        data-url="{{ url_for('rooms.machine_reports', code=room.roomId, machine_id=m.machineId) }}">
+        See reports
+    </button>
 
 </div>
 {% endfor %}
+<section id="reports-panel" hidden>
+    <h2 id="reports-title"></h2>
+    <ul id="reports-list"></ul>
+</section>
+{% block scripts %}
+<script src="{{ url_for('static', filename='javascript/reports.js') }}" defer></script>
+{% endblock %}
+
 {% endblock %}
